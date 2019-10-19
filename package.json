@@ -1,0 +1,19 @@
+{
+  "name": "anna",
+  "version": "1.0.0",
+  "description": "Name that starts with A",
+  "main": "anna.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s0s-dev/anna.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/s0s-dev/anna/issues"
+  },
+  "homepage": "https://github.com/s0s-dev/anna#readme"
+}
