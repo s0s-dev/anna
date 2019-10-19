@@ -14,7 +14,6 @@ var banned_channels = [
 
 var anna = new bot()
 
-// log errors
 process.on('uncaughtException', function(err) {
   anna.log(err)
   console.log(err)
@@ -47,10 +46,20 @@ client.on('ready', () => {
 // Reply to messages
 client.on('message', (receivedMessage) => {
   var replyRequired = false
-  var silent = false;
+  var greeted = false
+  var chan = receivedMessage.channel.name
 
   // Prevent bot from responding to its own messages
   if (receivedMessage.author == client.user) { return } // catch and release
+
+  // only send greeting message once
+  // note this needs to move to the database asap
+  var channelsGreeted = fs.readFileSync("conf/channels.txt").toString().split("\n")
+  for (i in channelsGreeted) {
+    if (receivedMessage.channel.name == channelsGreeted[i]) {
+      greeted = true
+    }
+  }
 
   var msg = receivedMessage.content
   var msg_lc = msg.toLowerCase()
@@ -63,10 +72,16 @@ client.on('message', (receivedMessage) => {
   console.log("botUser: " + botUser)
 
   // Check if the bot's user was tagged in the message
-  if (receivedMessage.content.includes(botUser)) {
+  // and make sure that the channel has not already been greeted
+  if (receivedMessage.content.includes(botUser) && !(greeted)) {
     // Send acknowledgement message
     //receivedMessage.channel.send("Message received from " + receivedMessage.author.toString() + ": " + receivedMessage.content)
     receivedMessage.channel.send(greeting)
+
+    fs.appendFile("./conf/channels.txt", chan + "\n", (err) => {
+      if (err) throw err;
+      console.log("Channel saved");
+    })
   }
 })
 
