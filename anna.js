@@ -48,9 +48,9 @@ client.on('message', (receivedMessage) => {
   var chan = receivedMessage.channel.name
   var chanCount = 0 // number of times a channel has been logged
 
-  var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"")
+  var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"").replace("<@!581973598302896254> ","")
   var msg_lc = msg.toLowerCase()
-
+  
   console.log(msg_lc)
 
   // Prevent bot from responding to its own messages
@@ -108,11 +108,14 @@ client.on('message', (receivedMessage) => {
           variableReward += (question.length * 250) // add .25s per character
           console.log(variableReward)
           setTimeout(function() { 
-            receivedMessage.channel.send(question)
+            if (!(annalib.isPaused())) {
+              receivedMessage.channel.send(question)
+            }
           },variableReward)
 
-          // note this should be a fucntion
-          annalib.logChan(chan)
+          if (receivedMessage.author.id != 581973598302896254) {
+            annalib.logChan(chan)
+          }
         } else {
           annalib.pause(receivedMessage.channel.name)
         }
