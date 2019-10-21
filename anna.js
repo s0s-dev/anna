@@ -1,15 +1,14 @@
-const bot_secret = require('./lib/bot-secret')
-var bot = require('./lib/bot');
+const questions = require("./conf/questions.json")
+const bot_secret = require("./lib/bot-secret")
+const bot = require("./lib/bot")
+const bot_functions = require("./lib/bot-functions")
 
 const fs = require('fs')
 
 const discord = require('discord.js')
 const client = new discord.Client()
-
-// puased channels (probably shouldn't be an array)
-var paused_channels = ["0"]
-
 var anna = new bot()
+var annalib = new bot_functions()
 
 process.on('uncaughtException', function(err) {
   anna.log(err)
@@ -25,6 +24,8 @@ client.on('ready', () => {
   anna.default_reply("...")
   anna.keywords("")
   anna.rating("G")
+
+  console.log(questions)
 
   // set discord client "now playing"
   var currentYear = new Date
@@ -49,7 +50,8 @@ client.on('message', (receivedMessage) => {
 
   var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"")
   var msg_lc = msg.toLowerCase()
-console.log(msg_lc)
+
+  console.log(msg_lc)
 
   // Prevent bot from responding to its own messages
   if (receivedMessage.author == client.user) { return } // catch and release
@@ -57,13 +59,13 @@ console.log(msg_lc)
   // allow interruption 
   if ((msg_lc == "stop") || (msg_lc == "pause")) {
     console.log("Paused")
-    paused_channels.push(receivedMessage.channel.name)
+    annalib.pause(receivedMessage.channel.name)
   }
 
   // resume
   if ((msg_lc == "start") || (msg_lc == "resume") || (msg_lc == "continue")) {
     console.log("Resumed")
-    resume(chan)
+    annalib.resume(chan)
   }
 
   // only send greeting message once
@@ -79,64 +81,45 @@ console.log(msg_lc)
   anna.log(receivedMessage.channel + msg)
 
   var botUser = client.user.toString()
-  botUser = stripPunctuation(botUser)
+  botUser = anna.stripPunctuation(botUser)
 
   console.log("message: " + receivedMessage.content)
   console.log("botUser: " + botUser)
 
-  if (!(isPaused(chan))) {
+  if (!(annalib.isPaused(chan))) {
     // Check if the bot's user was tagged in the message
     // and make sure that the channel has not already been greeted
     if (receivedMessage.content.includes(botUser) && (!(greeted))) {
       // Send greeting message
       receivedMessage.channel.send(greeting)
       // save channel 
-      logChan(chan)
+      annalib.logChan(chan)
     } else {
       if (greeted) {
         // begin the question flow
-        receivedMessage.channel.send(chanCount)
+        var questionNum = chanCount - 1 // less greeting
+        var questionJSON = questions[questionNum]
+        if (questionJSON) {
+          var question = questionJSON.question
+          // keep asking until we run out of questions
+          console.log("Question #" + chanCount + ": " + question)
 
-        // note this should be a fucntion
-        logChan(chan)
+          var variableReward = Math.floor(Math.random() * Math.floor(5000)) 
+          variableReward += (question.length * 250) // add .25s per character
+          console.log(variableReward)
+          setTimeout(function() { 
+            receivedMessage.channel.send(question)
+          },variableReward)
+
+          // note this should be a fucntion
+          annalib.logChan(chan)
+        } else {
+          annalib.pause(receivedMessage.channel.name)
+        }
       }
     }
   }
 })
 
-function resume(chan) {
-  if (paused_channels) {
-    for (var i = 0; i < paused_channels.length; i++) {
-      console.log(paused_channels[i])
-      if (chan == paused_channels[i]) {
-        paused_channels.splice(i,1)
-      }
-    }
-  console.log(paused_channels)
-  }
-}
-
-function logChan(chan) {
-  fs.appendFile("./conf/channels.txt", chan + "\n", (err) => {
-    if (err) throw err;
-    console.log("Channel saved");
-  })
-}
-
-function isPaused(chan) {
-  var retVal = false
-  for (var i in paused_channels) {
-    if (paused_channels[i] == chan) {
-      retVal = true
-    }
-  }
-  return retVal
-}
-
-function stripPunctuation(text) {
-    var tmp = text.replace(/[>.,\/#<@!$%\^&\*;:{}=\-_`~()]/g,"")
-    //tmp = tmp.replace(/\s{2,}/g," ")
-    return tmp
-}
 
 client.login(bot_secret.bot_secret_token)
