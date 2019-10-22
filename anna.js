@@ -1,4 +1,5 @@
-const questions = require("./conf/questions.json")
+const questions_file = require("./conf/questions.json")
+const greeting_file = require("./conf/greeting.json")
 const bot_secret = require("./lib/bot-secret")
 const bot = require("./lib/bot")
 const bot_functions = require("./lib/bot-functions")
@@ -25,7 +26,7 @@ client.on('ready', () => {
   anna.keywords("")
   anna.rating("G")
 
-  console.log(questions)
+  console.log(questions_file)
 
   // set discord client "now playing"
   var currentYear = new Date
@@ -39,11 +40,12 @@ client.on('ready', () => {
     if (err) throw err
     greeting = data
   })
+
+  greeting = greeting_file.greeting
 })
 
 // Reply to messages
 client.on('message', (receivedMessage) => {
-  var replyRequired = false
   var greeted = false
   var chan = receivedMessage.channel.name
   var chanCount = 0 // number of times a channel has been logged
@@ -58,14 +60,18 @@ client.on('message', (receivedMessage) => {
 
   // allow interruption 
   if ((msg_lc == "stop") || (msg_lc == "pause")) {
-    console.log("Paused")
+    chanCount-- // reduce count by one
+    console.log("Paused by " + receivedMessage.author.username)
     annalib.pause(receivedMessage.channel.name)
+    clearTimeout(timer)
   }
 
   // resume
   if ((msg_lc == "start") || (msg_lc == "resume") || (msg_lc == "continue")) {
     console.log("Resumed")
     annalib.resume(chan)
+
+    chanCount--
   }
 
   // only send greeting message once
@@ -98,20 +104,20 @@ client.on('message', (receivedMessage) => {
       if (greeted) {
         // begin the question flow
         var questionNum = chanCount - 1 // less greeting
-        var questionJSON = questions[questionNum]
+        var questionJSON = questions_file[questionNum]
         if (questionJSON) {
           var question = questionJSON.question
           // keep asking until we run out of questions
           console.log("Question #" + chanCount + ": " + question)
 
-          var variableReward = Math.floor(Math.random() * Math.floor(5000)) 
-          variableReward += (question.length * 250) // add .25s per character
-          console.log(variableReward)
-          setTimeout(function() { 
+          var timerSet = variableReward(question)
+          console.log(timerSet)
+
+          timer = setTimeout(function() { 
             if (!(annalib.isPaused())) {
               receivedMessage.channel.send(question)
             }
-          },variableReward)
+          },timerSet)
 
           if (receivedMessage.author.id != 581973598302896254) {
             annalib.logChan(chan)
@@ -124,5 +130,10 @@ client.on('message', (receivedMessage) => {
   }
 })
 
+function variableReward(question) {
+  var retval = Math.floor(Math.random() * Math.floor(5000)) 
+  retval += (question.length * 250) // add .25s per character
 
+  return retval
+}
 client.login(bot_secret.bot_secret_token)
