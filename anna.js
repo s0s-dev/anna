@@ -7,6 +7,8 @@ const discord = require('discord.js')
 const client = new discord.Client()
 var anna = new bot()
 
+var bot_id = "581973598302896254"
+
 process.on('uncaughtException', function(err) {
   anna.log(err)
   console.log(err)
@@ -39,48 +41,70 @@ client.on('ready', () => {
 
 // React to Dagny (et al)
 client.on('messageReactionAdd', (reaction, user) => {
-    if (!(reaction.message.author.id == "581973598302896254")) {
-        // Not Anna
-        clearTimer(reaction.message.channel)
-        console.log("channel log: ")
-        if (channel_log) {
-            // the user has been greeted
+  //console.log(getLastMessaage(reaction.message.channel))
+
+  if (!(reaction.message.author.id == bot_id)) {
+      // Not Anna
+      console.log("channel log: ")
+      if (channel_log) {
+          // the user has been greeted
+          
+          var chanCnt = 0
+          for (var i in channel_log) {
+              i++
+              chanCnt = i
+            }
+          console.log(chanCnt)
+
+          var emoji = reaction.emoji
+          if (emoji.name == "👍") {
+
+            console.log("Find question by name: ")
+            console.log(reaction.message.channel.lastMessage.content)
+            var mid = reaction.message.channel.lastMessage.id
+            var cid = reaction.message.channel
             
-            var chanCnt = 0
-            for (var i in channel_log) {
-                chanCnt++
+            //console.log(reaction.message.channel.messages({"before": mid, "limit": 1}))
+            //console.log(findQuestionByName(reaction.message.channel.messages({"before": mid, "limit": 1})))
+          }
+
+          // greeting question
+          if (chanCnt == 0) {
+              var emoji = reaction.emoji
+              console.log(emoji.name)
+              if (emoji.name == "👍") {
+                  // user has approved the question flow
+                  var q = questions_file[0]
+
+                  // ask the first question
+                  askQuestion(reaction.message.channel, "#" + q.id + ": " + q.question)
+              }
+              if (emoji.name == "👎") {
+                  // this should come from somewhere that's not here
+                  reaction.message.channel.send("Ok just let us know when you're ready.")
+                  // clearTimer(reaction.message.channel) // pause for questions
+                  chanCnt--
+              }
+          } else {
+            if (reaction.emoji.name == "❔") {
+                clearTimer(reaction.message.channel) // pause for questions
             }
-            console.log(chanCnt)
+          }
+      } else {
 
-            // greeting question
-            if (chanCnt == 0) {
-                var emoji = reaction.emoji
-                console.log(emoji.name)
-                if (emoji.name == "👍") {
-                    // user has approved the question flow
-                    var q = questions_file[0]
+      }
+  } else {
+      // it's you
+      loadChannelLog()
 
-                    // ask the first question
-                    askQuestion(reaction.message.channel, "#" + q.id + ": " + q.question)
-                }
-                if (emoji.name == "👎") {
-                    // this should come from somewhere that's not here
-                    reaction.message.channel.send("Ok just let us know when you're ready.")
-                }
-            } else {
-            }
-        } else {
+  }
+  if (user.id == "628367813345542154") {
+      // dagny tagged it
 
-        }
-    } else {
-        // it's you
-    }
-    if (user.id == "628367813345542154") {
-        // dagny tagged it
-    } else {
-        // someone else tagged it
-    }
-    
+
+  } else {
+      // someone else tagged it
+  }
 })
 
 // Reply to messages
@@ -91,7 +115,9 @@ client.on('message', (receivedMessage) => {
     var greeted = false
     var dontAtMe = false
     var chanCount = 0
-    
+
+    var q = getNextQuestion(receivedMessage.channel)
+
     //loadChannelLog(receivedMessage.channel)
 
     clearTimer(receivedMessage.channel)
@@ -103,11 +129,11 @@ client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) { return } 
 
     // bot was @ tagged
-    if (receivedMessage.content.startsWith("<@!581973598302896254>")) {
+    if (receivedMessage.content.startsWith("<@!" + bot_id + ">")) {
         dontAtMe = true
 
         // strip out all references to @anna
-        var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"").replace("<@!581973598302896254> ","")
+        var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"").replace(("<@!" + bot_id + "> "),"")
         var msg_lc = anna.stripPunctuation(msg.toLowerCase())
         if (msg_lc.startsWith("anna")) { msg_lc = msg_lc.replace("anna ","") }
 
@@ -115,25 +141,21 @@ client.on('message', (receivedMessage) => {
 
         // allow interruption 
         if ((msg_lc == "stop") || (msg_lc == "pause")) {
-            clearTimer(receivedMessage.channel)
             console.log("Paused by " + receivedMessage.author.username)
-            //annalib.pause(receivedMessage.channel.name)
-            //clearTimeout(timer)
+            clearTimer(receivedMessage.channel)
         }
 
         // resume
-        if ((msg_lc == "resume") || (msg_lc == "continue")) {
+        if ((msg_lc == "start") || (msg_lc == "resume") || (msg_lc == "continue")) {
             console.log("Resumed by " + receivedMessage.author.username)
-            //annalib.resume(chan)
-            //askQuestion(receivedMessage.channel,"How are you?")
-
-            //chanCount++
+            if (q) {
+              askQuestion(receivedMessage.channel,q.question)              
+            }
         }
 
         // start 
         if (msg_lc == "start") { 
             console.log("START command issued by " + receivedMessage.author.username)
-            // askQuestion(receivedMessage.channel, greeting)
             var tmp = greeting_file.greeting
 
             askQuestion(receivedMessage.channel,tmp)
@@ -144,17 +166,47 @@ client.on('message', (receivedMessage) => {
         // ask a question
         console.log(channel_log)
 
-        console.log("next question:")
-        var q = getNextQuestion(receivedMessage.channel)
-        
+        console.log("next question:")        
         console.log(q)
         if (q) {
-            askQuestion(receivedMessage.channel,"#" + q.id + ": " + q.question)
+          //"#" + q.id + ": " + 
+          askQuestion(receivedMessage.channel,q.question)
         }
     }
 
     loadChannelLog()
 })
+
+function getLastMessage(channel) {
+  if (channel) {
+    channel.fetchMessages({ limit: 1 }).then(messages => {
+      let lastMessage = messages.first();
+    
+      if (lastMessage.author.bot) {
+        // The author of the last message was a bot
+        var q = findQuestionByName(lastMessage.content)
+        console.log("Finding question by name:")
+        console.log(q)
+
+        return q
+      }
+    })
+    .catch(console.error)
+  }
+}
+
+function findQuestionByName(question) {
+  console.log("Matching: ")
+  console.log(question)
+  for (var i in questions_file) {
+    var q = questions_file[i]
+    
+    if (q.question == question) {
+      console.log("ID Matches: " + i) 
+      return q
+    }
+  }
+}
 
 function resetTimer(channel) {
     clearTimer(channel)
