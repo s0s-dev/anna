@@ -1,0 +1,87 @@
+(Welcome to $0$)
+
+1. Do you need emergency services?
+
+2. Are you in a safe location?
+
+3. Is there anything that you need immediately (such as food, car repair, housing, financial assistance, etc)?
+
+(Greeting)
+
+4. What is your first and last name? 
+
+5. If you have a middle name or names, what are they?
+
+6. How old are you?
+
+7. What state are you located in?
+
+(Next, let’s figure out what you want from your $0$ experience.)
+
+8. How did you find us?
+
+9. Why did you contact us? Do you need help? Do you want to donate? Do you want to volunteer?
+
+Branching: Clients
+
+1. What sort of help do you need?
+
+Branching: Volunteers
+
+1. What is your skillset? 
+
+2. What would you like to do?
+
+Branching: Donors
+
+1. What do you have to donate?
+
+
+[Client Branch]
+
+(Questions are focused based on what kind of aid client needs)
+
+(Shared questions)
+
+1. What is your current housing situation?
+2. Do you currently have a job?
+3. Do you currently have transportation?
+4. Do you have any dependents? (Kids, elders, pets)
+5. Where are you currently located?
+(type branch)
+
+(Food related)
+
+1. When was the last time you ate?
+2. Any dietary restrictions?
+(return to demo)
+
+(Goods related)
+
+1. What do you need?
+2. What is it for?
+(return to demo)
+
+(Money related)
+
+1. How much do you need?
+2. What is it for?
+(return to demo)
+
+(demo)
+++fill out full survey++
+
+
+[Volunteer Branch]
+
+(Questions based on skill set and desires)
+
+++Fill out full survey++
+(Page staff)
+
+
+[Donor Branch]
+
+++Fill out full survey++
+(page staff)
+
