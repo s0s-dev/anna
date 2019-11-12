@@ -1,41 +1,31 @@
 const questions_file = require("./conf/questions.json")
-const greeting_file = require("./conf/greeting.json")
+
+const timer_functions = require("./lib/timer")
 const bot_secret = require("./lib/bot-secret")
 const bot = require("./lib/bot")
 
+var anna = new bot()
+var bot_id = "581973598302896254"
+
 const discord = require('discord.js')
 const client = new discord.Client()
-var anna = new bot()
-
-var bot_id = "581973598302896254"
 
 process.on('uncaughtException', function(err) {
   anna.log(err)
   console.log(err)
 })
 
-var greeting = ""
-var questionWords = []
+var greeting
 var channel_log
 
 client.on('ready', () => {
   anna.log("Connected as " + client.user.tag)
-
   anna.name("Anna")
-  anna.default_reply("...")
-  anna.keywords("")
-  anna.rating("G")
-
   console.log(questions_file)
 
-  // set discord client "now playing"
-  var currentYear = new Date
-  currentYear.getFullYear
+  //var nowPlayingText = "ABBA" 
+  //client.user.setActivity(nowPlayingText)
 
-  var nowPlayingText = "ABBA" 
-  client.user.setActivity(nowPlayingText)
-
-  greeting = greeting_file.greeting
   channel_log = loadChannelLog()
 })
 
@@ -82,12 +72,12 @@ client.on('messageReactionAdd', (reaction, user) => {
               if (emoji.name == "👎") {
                   // this should come from somewhere that's not here
                   reaction.message.channel.send("Ok just let us know when you're ready.")
-                  // clearTimer(reaction.message.channel) // pause for questions
+                  // timer_functions.clearTimer(reaction.message.channel) // pause for questions
                   chanCnt--
               }
           } else {
             if (reaction.emoji.name == "❔") {
-                clearTimer(reaction.message.channel) // pause for questions
+              timer_functions.clearTimer(reaction.message.channel) // pause for questions
             }
           }
       } else {
@@ -108,8 +98,6 @@ client.on('messageReactionAdd', (reaction, user) => {
 })
 
 // Reply to messages
-var timers = []
-//var global_timer 
 var lastSpoke
 client.on('message', (receivedMessage) => {
     var greeted = false
@@ -120,7 +108,7 @@ client.on('message', (receivedMessage) => {
 
     //loadChannelLog(receivedMessage.channel)
 
-    clearTimer(receivedMessage.channel)
+    timer_functions.clearTimer(receivedMessage.channel)
     console.log(receivedMessage.content)
 
     lastSpoke = receivedMessage.author
@@ -142,7 +130,7 @@ client.on('message', (receivedMessage) => {
         // allow interruption 
         if ((msg_lc == "stop") || (msg_lc == "pause")) {
             console.log("Paused by " + receivedMessage.author.username)
-            clearTimer(receivedMessage.channel)
+            timer_functions.clearTimer(receivedMessage.channel)
         }
 
         // resume
@@ -208,54 +196,11 @@ function findQuestionByName(question) {
   }
 }
 
-function resetTimer(channel) {
-    clearTimer(channel)
-    setTimer(channel,variableReward())
-}
-
-function clearTimer(channel) {
-    console.log("Clearing the timer for " + channel.id)
-    for (var i in timers) {
-        var tmpTimer = timers[i]
-        if (tmpTimer.channel == channel.id) {
-            clearTimeout(tmpTimer.timer)
-
-            // remove it from the array
-            timers.splice(i,1)
-        }
-    }
-}
-
-function setTimer(channel,question = "") {
-    var timer = {}
-    var tmpTimer = setTimeout(function() { 
-      //if (!(annalib.isPaused())) {
-
-        if (question != "") { 
-            // only save a log of it if the question is actually sent
-            var log = {}
-            log.channel = channel.id
-            log.question = question
-            log.date = Date.now()
-
-            anna.insertDataMongo(log,"anna","channels")
-            channel.send(question) // shhh
-        }
-    //}
-    },variableReward(question))
-    timer.timer = tmpTimer
-    timer.channel = channel.id
-    timers.push(timer)
-
-    return timer
-}
-
-
 function askQuestion(channel, question = "How are you?") {
     loadChannelLog(channel)
 
     console.log("Asking " + question + " in " + channel.name)
-    var timer = setTimer(channel, question)
+    var timer = timer_functions.setTimer(channel, question)
 
     //console.log(channel_log)
 }

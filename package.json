@@ -15,5 +15,15 @@
   "bugs": {
     "url": "https://github.com/s0s-dev/anna/issues"
   },
-  "homepage": "https://github.com/s0s-dev/anna#readme"
+  "homepage": "https://github.com/s0s-dev/anna#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "mongodb": "^3.3.4",
+    "request": "^2.88.0",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.2.1"
+  }
 }
