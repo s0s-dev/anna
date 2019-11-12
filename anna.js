@@ -1,3 +1,4 @@
+const greeting_file = require("./conf/greeting.json")
 const questions_file = require("./conf/questions.json")
 
 const timer_functions = require("./lib/timer")
