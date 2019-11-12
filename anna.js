@@ -21,7 +21,10 @@ var channel_log
 
 client.on('ready', () => {
   anna.log("Connected as " + client.user.tag)
+
   anna.name("Anna")
+  anna.default_reply("...")
+
   console.log(questions_file)
 
   //var nowPlayingText = "ABBA" 
@@ -204,14 +207,6 @@ function askQuestion(channel, question = "How are you?") {
     var timer = timer_functions.setTimer(channel, question)
 
     //console.log(channel_log)
-}
-
-
-function variableReward(question = "") {
-    var retval = Math.floor(Math.random() * Math.floor(5000)) 
-    retval += (question.length * 100) // add .25s per character
-
-    return retval
 }
 
 function getNextQuestion(channel) {
