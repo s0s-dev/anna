@@ -90,7 +90,6 @@ client.on('message', (receivedMessage) => {
     console.log(receivedMessage.content)
     receivedMessage.channel.fetchMessages({ limit: 20 })
     .then(messages => function(messages) {
-
       console.log("Get next question")
       
       var msg = receivedMessage.content
@@ -98,34 +97,40 @@ client.on('message', (receivedMessage) => {
     })
 
     var tmpMsg = receivedMessage.content
+    var atMe = false 
+    if (tmpMsg.indexOf("<@!" + bot_id + ">") != -1) {
+      console.log("Don't @ me")
+      atMe = true
+    }
     tmpMsg = tmpMsg.replace("<@!" + bot_id + "> ","").toLowerCase()
     tmpMsg = anna.stripPunctuation(tmpMsg)
 
-    if (tmpMsg.startsWith("start")) {
-      console.log("Starting question flow")
-      var intro = questions_file[0]
-      timer_functions.setTimer(receivedMessage.channel, intro.question)
-
-      annaStart(receivedMessage.channel.id)
-    }
-
-    if ((tmpMsg == ("stop")) || (tmpMsg.startsWith("pause"))) {
-      console.log("Stopping question flow")
-      annaStop(receivedMessage.channel.id)
-    }
-
-    if ((tmpMsg.startsWith("resume")) || (tmpMsg.startsWith("continue"))) {
-      console.log("Resume question flow")
-      annaStart(receivedMessage.channel.id)
-    }
-
-    if (receivedMessage.content.startsWith("!next")) {
-      var q = anna_functions.getQuestion(receivedMessage.channel, messages)
-      if (q) {
-        timer_functions.setTimer(receivedMessage.channel, q.question)
+    if (atMe) {
+      if (tmpMsg.startsWith("start")) {
+        console.log("Starting question flow")
+        var intro = questions_file[0]
+        timer_functions.setTimer(receivedMessage.channel, intro.question)
+  
+        annaStart(receivedMessage.channel.id)
+      }
+  
+      if ((tmpMsg == ("stop")) || (tmpMsg.startsWith("pause"))) {
+        console.log("Stopping question flow")
+        annaStop(receivedMessage.channel.id)
+      }
+  
+      if ((tmpMsg.startsWith("resume")) || (tmpMsg.startsWith("continue"))) {
+        console.log("Resume question flow")
+        annaStart(receivedMessage.channel.id)
+      }
+  
+      if (receivedMessage.content.startsWith("next")) {
+        var q = anna_functions.getQuestion(receivedMessage.channel, messages)
+        if (q) {
+          timer_functions.setTimer(receivedMessage.channel, q.question)
+        }
       }
     }
-    
   } 
 })
 
