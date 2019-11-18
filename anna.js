@@ -52,7 +52,7 @@ client.on('messageReactionAdd', (reaction, user) => {
   if (anna_functions.isNextEmoji(icon)) {
     console.log("NEXT!")
     
-    reaction.message.channel.fetchMessages({ limit: 10 })
+    reaction.message.channel.fetchMessages({ limit: 20 })
     .then(function(messages) {
       console.log("Get next question")
       var q = anna_functions.getQuestion(reaction.message.channel, messages)
@@ -88,7 +88,7 @@ client.on('message', (receivedMessage) => {
     },15000)
   
     console.log(receivedMessage.content)
-    receivedMessage.channel.fetchMessages({ limit: 10 })
+    receivedMessage.channel.fetchMessages({ limit: 20 })
     .then(messages => function(messages) {
 
       console.log("Get next question")
