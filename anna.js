@@ -155,6 +155,12 @@ function giveUp(messages) {
       if ((msg.author.id != greeter_id) && (msg.author.id != bot_id)) {  
         var regex = /^[0-9]+$/g
         var chan = msg.channel.name
+        
+        // allows channels to be named with -[name] 
+        /// like we have been doing on discord 
+        var aChan = chan.split("-")
+        if (aChan[0]) { chan = aChan[0] }
+
           // only post in numbered channels
           if (chan.match(regex)) {
           msg.react("✔️") 
