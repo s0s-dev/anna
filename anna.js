@@ -98,8 +98,8 @@ client.on('message', (receivedMessage) => {
     })
 
     var tmpMsg = receivedMessage.content
-    tmpMsg = tmpMsg.replace("<@!" + bot_id + "> ","")
-    tmpMsg = anna.toLowerCase().stripPunctuation(tmpMsg)
+    tmpMsg = tmpMsg.replace("<@!" + bot_id + "> ","").toLowerCase()
+    tmpMsg = anna.stripPunctuation(tmpMsg)
 
     if (tmpMsg.startsWith("start")) {
       console.log("Starting question flow")
