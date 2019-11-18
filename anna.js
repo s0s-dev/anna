@@ -34,7 +34,6 @@ client.on('ready', () => {
 // reactions
 client.on('messageReactionAdd', (reaction, user) => {
   var icon = reaction.emoji.name
-  console.log(icon)
 
   // not annabot
   if (reaction.message.author.id != bot_id) {
@@ -64,7 +63,7 @@ client.on('messageReactionAdd', (reaction, user) => {
         
         // add to started channel if not there (because it's obviously started)
         if (!(isStarted(reaction.message.channel.id))) {
-          anna_start.push(reaction.message.channel.id)
+          annaStart(reaction.message.channel.id)
         }
       }
     })
@@ -100,13 +99,24 @@ client.on('message', (receivedMessage) => {
 
     var tmpMsg = receivedMessage.content
     tmpMsg = tmpMsg.replace("<@!" + bot_id + "> ","")
-    tmpMsg = anna.stripPunctuation(tmpMsg)
+    tmpMsg = anna.toLowerCase().stripPunctuation(tmpMsg)
 
     if (tmpMsg.startsWith("start")) {
+      console.log("Starting question flow")
       var intro = questions_file[0]
       timer_functions.setTimer(receivedMessage.channel, intro.question)
 
-      anna_start.push(receivedMessage.channel.id)
+      annaStart(receivedMessage.channel.id)
+    }
+
+    if ((tmpMsg == ("stop")) || (tmpMsg.startsWith("pause"))) {
+      console.log("Stopping question flow")
+      annaStop(receivedMessage.channel.id)
+    }
+
+    if ((tmpMsg.startsWith("resume")) || (tmpMsg.startsWith("continue"))) {
+      console.log("Resume question flow")
+      annaStart(receivedMessage.channel.id)
     }
 
     if (receivedMessage.content.startsWith("!next")) {
@@ -128,6 +138,7 @@ function isStarted(channel_id) {
   }
   return retval
 }
+
 function giveUp(messages) {
   var msg = messages.last()
 
@@ -146,8 +157,19 @@ function giveUp(messages) {
       }
     }
   }
-
   clearTimeout(msgTimer)
+}
+
+function annaStart(channel_id) {
+  anna_start.push(channel_id)
+}
+
+function annaStop(channel_id) {
+  for (var i in anna_start) {
+    if (channel_id == anna_start[i]) {
+      anna_start.splice(i, 1)
+    }
+  }
 }
 
 client.login(bot_secret.bot_secret_token)
