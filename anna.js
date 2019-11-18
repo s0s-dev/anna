@@ -1,254 +1,153 @@
-const greeting_file = require("./conf/greeting.json")
 const questions_file = require("./conf/questions.json")
 
+const anna_functions = require("./lib/functions")
 const timer_functions = require("./lib/timer")
 const bot_secret = require("./lib/bot-secret")
 const bot = require("./lib/bot")
 
 var anna = new bot()
 var bot_id = "581973598302896254"
+var greeter_id = "606685267675578369"
+
+var questions_channel = "635737039517777931"
 
 const discord = require('discord.js')
 const client = new discord.Client()
+
+var anna_start = []
 
 process.on('uncaughtException', function(err) {
   anna.log(err)
   console.log(err)
 })
 
-var greeting
-var channel_log
-
 client.on('ready', () => {
+
   anna.log("Connected as " + client.user.tag)
-
   anna.name("Anna")
-  anna.default_reply("...")
 
-  console.log(questions_file)
+  var nowPlayingText = "Anna 3" 
+  client.user.setActivity(nowPlayingText)
 
-  //var nowPlayingText = "ABBA" 
-  //client.user.setActivity(nowPlayingText)
-
-  channel_log = loadChannelLog()
 })
 
-// React to Dagny (et al)
+// reactions
 client.on('messageReactionAdd', (reaction, user) => {
-  //console.log(getLastMessaage(reaction.message.channel))
+  var icon = reaction.emoji.name
+  console.log(icon)
 
-  if (!(reaction.message.author.id == bot_id)) {
-      // Not Anna
-      console.log("channel log: ")
-      if (channel_log) {
-          // the user has been greeted
-          
-          var chanCnt = 0
-          for (var i in channel_log) {
-              i++
-              chanCnt = i
-            }
-          console.log(chanCnt)
+  // not annabot
+  if (reaction.message.author.id != bot_id) {
+    // the user (or someone) has a question
+    if (icon === "❔") {
+      // send the question to the #questions cahnnel
+      qChannel = client.channels.get(questions_channel)
 
-          var emoji = reaction.emoji
-          if (emoji.name == "👍") {
-
-            console.log("Find question by name: ")
-            console.log(reaction.message.channel.lastMessage.content)
-            var mid = reaction.message.channel.lastMessage.id
-            var cid = reaction.message.channel
-            
-            //console.log(reaction.message.channel.messages({"before": mid, "limit": 1}))
-            //console.log(findQuestionByName(reaction.message.channel.messages({"before": mid, "limit": 1})))
-          }
-
-          // greeting question
-          if (chanCnt == 0) {
-              var emoji = reaction.emoji
-              console.log(emoji.name)
-              if (emoji.name == "👍") {
-                  // user has approved the question flow
-                  var q = questions_file[0]
-
-                  // ask the first question
-                  askQuestion(reaction.message.channel, "#" + q.id + ": " + q.question)
-              }
-              if (emoji.name == "👎") {
-                  // this should come from somewhere that's not here
-                  reaction.message.channel.send("Ok just let us know when you're ready.")
-                  // timer_functions.clearTimer(reaction.message.channel) // pause for questions
-                  chanCnt--
-              }
-          } else {
-            if (reaction.emoji.name == "❔") {
-              timer_functions.clearTimer(reaction.message.channel) // pause for questions
-            }
-          }
-      } else {
-
-      }
-  } else {
-      // it's you
-      loadChannelLog()
-
+      var qMsg = reaction.message.content
+      console.log(qMsg)
+      qChannel.send('"' + qMsg + '" in <#' + reaction.message.channel.id + '>')
+    }
   }
-  if (user.id == "628367813345542154") {
-      // dagny tagged it
 
-
-  } else {
-      // someone else tagged it
+  // emojis trigger next question
+  if (anna_functions.isNextEmoji(icon)) {
+    console.log("NEXT!")
+    
+    reaction.message.channel.fetchMessages({ limit: 10 })
+    .then(function(messages) {
+      console.log("Get next question")
+      var q = anna_functions.getQuestion(reaction.message.channel, messages)
+    
+      if (q) {
+        console.log(q.question)
+        timer_functions.setTimer(reaction.message.channel,q.question)  
+        
+        // add to started channel if not there (because it's obviously started)
+        if (!(isStarted(reaction.message.channel.id))) {
+          anna_start.push(reaction.message.channel.id)
+        }
+      }
+    })
   }
 })
 
-// Reply to messages
-var lastSpoke
+var msgTimer 
 client.on('message', (receivedMessage) => {
-    var greeted = false
-    var dontAtMe = false
-    var chanCount = 0
+  // do not reply to yourself
+  if (receivedMessage.author == client.user) { 
+    return 
+  } else {
 
-    var q = getNextQuestion(receivedMessage.channel)
-
-    //loadChannelLog(receivedMessage.channel)
-
-    timer_functions.clearTimer(receivedMessage.channel)
+    msgTimer = setTimeout(function() {
+      // get last message and tag it with next
+      console.log("MOVING ON!")
+  
+      // Give up by reacting last message after 30 seconds
+      receivedMessage.channel.fetchMessages({ limit: 1 })
+      .then(messages => giveUp(messages))
+      .catch(console.error)
+    },15000)
+  
     console.log(receivedMessage.content)
+    receivedMessage.channel.fetchMessages({ limit: 10 })
+    .then(messages => function(messages) {
 
-    lastSpoke = receivedMessage.author
+      console.log("Get next question")
+      
+      var msg = receivedMessage.content
+      console.log(msg)
+    })
 
-    // Prevent bot from responding to its own messages
-    if (receivedMessage.author == client.user) { return } 
+    var tmpMsg = receivedMessage.content
+    tmpMsg = tmpMsg.replace("<@!" + bot_id + "> ","")
+    tmpMsg = anna.stripPunctuation(tmpMsg)
 
-    // bot was @ tagged
-    if (receivedMessage.content.startsWith("<@!" + bot_id + ">")) {
-        dontAtMe = true
+    if (tmpMsg.startsWith("start")) {
+      var intro = questions_file[0]
+      timer_functions.setTimer(receivedMessage.channel, intro.question)
 
-        // strip out all references to @anna
-        var msg = receivedMessage.content.replace(/<@![0-9]*> /g,"").replace(("<@!" + bot_id + "> "),"")
-        var msg_lc = anna.stripPunctuation(msg.toLowerCase())
-        if (msg_lc.startsWith("anna")) { msg_lc = msg_lc.replace("anna ","") }
-
-        console.log("Don't @ me")
-
-        // allow interruption 
-        if ((msg_lc == "stop") || (msg_lc == "pause")) {
-            console.log("Paused by " + receivedMessage.author.username)
-            timer_functions.clearTimer(receivedMessage.channel)
-        }
-
-        // resume
-        if ((msg_lc == "start") || (msg_lc == "resume") || (msg_lc == "continue")) {
-            console.log("Resumed by " + receivedMessage.author.username)
-            if (q) {
-              askQuestion(receivedMessage.channel,q.question)              
-            }
-        }
-
-        // start 
-        if (msg_lc == "start") { 
-            console.log("START command issued by " + receivedMessage.author.username)
-            var tmp = greeting_file.greeting
-
-            askQuestion(receivedMessage.channel,tmp)
-            greeted = true
-        }
-
-    } else {
-        // ask a question
-        console.log(channel_log)
-
-        console.log("next question:")        
-        console.log(q)
-        if (q) {
-          //"#" + q.id + ": " + 
-          askQuestion(receivedMessage.channel,q.question)
-        }
+      anna_start.push(receivedMessage.channel.id)
     }
 
-    loadChannelLog()
+    if (receivedMessage.content.startsWith("!next")) {
+      var q = anna_functions.getQuestion(receivedMessage.channel, messages)
+      if (q) {
+        timer_functions.setTimer(receivedMessage.channel, q.question)
+      }
+    }
+    
+  } 
 })
 
-function getLastMessage(channel) {
-  if (channel) {
-    channel.fetchMessages({ limit: 1 }).then(messages => {
-      let lastMessage = messages.first();
-    
-      if (lastMessage.author.bot) {
-        // The author of the last message was a bot
-        var q = findQuestionByName(lastMessage.content)
-        console.log("Finding question by name:")
-        console.log(q)
+function isStarted(channel_id) {
+  var retval = false
+  for (var i in anna_start) {
+    if (channel_id == anna_start[i]) {
+      retval = true
+    }
+  }
+  return retval
+}
+function giveUp(messages) {
+  var msg = messages.last()
 
-        return q
+  // has not been reacted to
+  if (msg.reactions.size == 0) {
+    // is in anna_started array
+    if (isStarted(msg.channel.id)) {
+      // not greeter and not anna
+      if ((msg.author.id != greeter_id) && (msg.author.id != bot_id)) {  
+        var regex = /^[0-9]+$/g
+        var chan = msg.channel.name
+          // only post in numbered channels
+          if (chan.match(regex)) {
+          msg.react("✔️") 
+        }
       }
-    })
-    .catch(console.error)
-  }
-}
-
-function findQuestionByName(question) {
-  console.log("Matching: ")
-  console.log(question)
-  for (var i in questions_file) {
-    var q = questions_file[i]
-    
-    if (q.question == question) {
-      console.log("ID Matches: " + i) 
-      return q
     }
   }
+
+  clearTimeout(msgTimer)
 }
 
-function askQuestion(channel, question = "How are you?") {
-    loadChannelLog(channel)
-
-    console.log("Asking " + question + " in " + channel.name)
-    var timer = timer_functions.setTimer(channel, question)
-
-    //console.log(channel_log)
-}
-
-function getNextQuestion(channel) {
-    if (channel_log) {
-        var chanCnt = 0
-        for (var i in channel_log) {
-            chanCnt++
-        }
-        console.log(chanCnt)
-
-        // next question
-        if (chanCnt > 0) {
-            var tmpQuestion = questions_file[chanCnt]
-            console.log(tmpQuestion)
-        }
-
-        return tmpQuestion
-    }
-}
-
-function loadChannelLog(channel) {
-	var query = {}
-	if (channel) {
-		query.channel = channel.id
-	}
-
-    var formatting = { date:1,user:1,text:1, _id:0}
-    formatting = {}
-
-	var initializePromise = anna.getDataMongo("anna","channels",query,formatting)
-    initializePromise.then(function(result) {
-        channel_log = result
-        //console.log("Loaded channel log")
-        //console.log(channel_log)
-        //parseDictionary(dict)
-
-        return result
-        resolve(result)
-    }, function(err) {
-        console.log(err);
-    })
-}
-
-  
 client.login(bot_secret.bot_secret_token)
