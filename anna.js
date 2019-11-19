@@ -9,7 +9,8 @@ var anna = new bot()
 var bot_id = "581973598302896254"
 var greeter_id = "606685267675578369"
 
-var questions_channel = "635737039517777931"
+var questions_channel = "643197969365204994"
+var questions_channel_dev = "635737039517777931"
 
 const discord = require('discord.js')
 const client = new discord.Client()
@@ -26,7 +27,7 @@ client.on('ready', () => {
   anna.log("Connected as " + client.user.tag)
   anna.name("Anna")
 
-  var nowPlayingText = "Anna 3" 
+  var nowPlayingText = "20 Questions" 
   client.user.setActivity(nowPlayingText)
 
 })
