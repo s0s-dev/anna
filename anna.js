@@ -40,12 +40,15 @@ client.on('messageReactionAdd', (reaction, user) => {
   if (reaction.message.author.id != bot_id) {
     // the user (or someone) has a question
     if (icon === "❔") {
-      // send the question to the #questions cahnnel
-      qChannel = client.channels.get(questions_channel)
+      // send the question to the #questions channel
+      if (reaction.message.author.bot) {
+        // only send questions from end users, 
+        // not people on the discord server
+        qChannel = client.channels.get(questions_channel)
 
-      var qMsg = reaction.message.content
-      console.log(qMsg)
-      qChannel.send('"' + qMsg + '" in <#' + reaction.message.channel.id + '>')
+        var qMsg = reaction.message.content
+        console.log(qMsg)
+        qChannel.send('"' + qMsg + '" in <#' + reaction.message.channel.id + '>')      }
     }
   }
 
