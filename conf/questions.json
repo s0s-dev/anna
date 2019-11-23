@@ -9,114 +9,106 @@
     },
     {
         "id": "2",
-        "question": "What do you need the most right now?"
-    },
-    {
-        "id": "3",
-        "question": "Where are you located?"
-    },
-    {
-        "id": "4",
-        "question": "How old are you?"
-    },
-    { 
-        "id": "5",
-        "question": "What is your race?"
-    },
-    { 
-        "id": "6",
-        "question": "Gender?"
-    },
-    { 
-        "id": "7",
-        "question": "Do you identify as trans?"
-    },
-    { 
-        "id": "8",
-        "question": "What is your sexual orientation?"
-    },
-    { 
-        "id": "9",
-        "question": "Are you married or have you ever been married?"
-    },
-    { 
-        "id": "10",
-        "question": "What is the highest level of education you have?"
-    },
-    { 
-        "id": "11",
-        "question": "Are you employed? If so, what is your approximate monthly income?"
-    },
-    {
-        "id": "12",
-        "question": "Do you have transportation?"
-    },
-    {
-        "id": "13",
-        "question": "What is your current housing situation?"
-    },
-    {
-        "id": "14",
-        "question": "How many people live with you?"
-    },
-    {
-        "id": "15",
-        "question": "Do you have any dependents? (children, elders, pets)"
-    },
-    { 
-        "id": "16",
-        "question": "Have you ever been homeless?"
-    },
-    {
-        "id": "17",
-        "question": "Are you currently homeless?"
-    },
-    {
-        "id": "18",
         "question": "When was the last time you ate?"
     },
     {
-        "id": "19",
+        "id": "3",
+        "question": "What do you need the most right now?"
+    },
+    {
+        "id": "4",
+        "question": "Where are you located?"
+    },
+    {
+        "id": "5",
+        "question": "How old are you?"
+    },
+    { 
+        "id": "6",
+        "question": "What is your race or ethnicity?"
+    },
+    { 
+        "id": "7",
+        "question": "What gender do you identify as?"
+    },
+    { 
+        "id": "8",
+        "question": "Do you identify as trans?"
+    },
+    { 
+        "id": "9",
+        "question": "What is your sexual orientation?"
+    },
+    { 
+        "id": "10",
+        "question": "Are you married or have you ever been married?"
+    },
+    { 
+        "id": "11",
+        "question": "What is the highest level of education you have?"
+    },
+    { 
+        "id": "12",
+        "question": "Do you have any trade skills or licenses?"
+    },
+    { 
+        "id": "13",
+        "question": "Are you employed? If so, how many hours a week do you work?"
+    },
+    {
+        "id": "14",
+        "question": "What is your approximate monthly income?"
+    },
+    {
+        "id": "15",
+        "question": "Do you have reliable personal transportation, or do you have access to someone else's transportation??"
+    },
+    {
+        "id": "16",
+        "question": "What is your current housing situation? Are you currently renting, staying with a friend, living in your car, living on the street or other?"
+    },
+    {
+        "id": "17",
+        "question": "How many people live with you? Do you have any dependents? (children, elders, pets, roomates)"
+    },
+    {
+        "id": "18",
         "question": "Do you have a mailing address? If so, what is it?"
     },
     {
-        "id": "20",
+        "id": "19",
         "question": "Are there any other adults who live at that address?"
     },
     { 
-        "id": "21",
+        "id": "20",
         "question": "Are you a military veteran? If so, which branch?"
     },
     { 
-        "id": "22",
+        "id": "21",
         "question": "Have you ever worked for the federal, state, or local government? If so, which department?"
     },
     { 
+        "id": "22",
+        "question": "If you have been convicted of a felony, would you be interested in participating in a program to help felons re-entering the workforce?"
+    },
+    { 
         "id": "23",
-        "question": "Have you ever been arrested or convicted of a crime?"
+        "question": "Have you been the victim of domestic or sexual violence, assault, or abuse?"
     },
     { 
         "id": "24",
-        "question": "Have you ever been the victim of a crime?"
-    },
-    { 
-        "id": "25",
         "question": "Do you have any outstanding debts, including things like student loans or credit card debts? Approximately how much do you owe?"
     },
     { 
+        "id": "25",
+        "question": "Are you on or have you used government services before?"
+    },
+    { 
         "id": "26",
-        "question": "Have you used government services before? If so, which ones?"
-    },
-    { 
-        "id": "27",
-        "question": "Have you applied for aid from non-profit groups before?"
-    },
-    { 
-        "id": "28",
-        "question": "Are you interested in doing so now?"
+        "question": "Have worked with a non-profit group for assistance?"
     },
     {
-        "id": "29",
-        "question": "Thanks, that's all the questions I have. I really appreciate your help! May I have your email address so I can send you a follow up email?"
+        "id": "27",
+        "question": "Thanks, that's all the questions I have right now. I really appreciate your help! May I have your email address so I can send you a follow up email?"
     }
 ]
