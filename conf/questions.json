@@ -1,19 +1,15 @@
 [
     {
         "id": "0",
-        "question": "Hi, my name is Anna. I'm going to ask you a few questions. You can skip any that you don't want to answer. Are you ready to get started?"
+        "question": "Hi, my name Anna. I'm going to ask you a few questions. You can skip anything you want to. Are you ready to get started?"
     },  
     {
         "id": "1",
-        "question": "Is there anything that you need urgently such as food, car repair, housing, or eviction assistance?"
+        "question": "What is your most urgent need?"
     },
     {
         "id": "2",
         "question": "When was the last time you ate?"
-    },
-    {
-        "id": "3",
-        "question": "What do you need the most right now?"
     },
     {
         "id": "4",
