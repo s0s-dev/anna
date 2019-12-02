@@ -1,3 +1,5 @@
+var dev = process.env.DEV || false
+
 const questions_file = require("./conf/questions.json")
 
 const anna_functions = require("./lib/functions")
@@ -5,15 +7,18 @@ const timer_functions = require("./lib/timer")
 const bot_secret = require("./lib/bot-secret")
 const bot = require("./lib/bot")
 
+const discord = require('discord.js')
+const client = new discord.Client()
+
 var anna = new bot()
 var bot_id = "581973598302896254"
 var greeter_id = "606685267675578369"
 
+// set questions channel
 var questions_channel = "643197969365204994"
-var questions_channel_dev = "635737039517777931"
-
-const discord = require('discord.js')
-const client = new discord.Client()
+if (dev) { 
+  questions_channel = "635737039517777931"
+}
 
 var tmp_token
 if (bot_secret) {
