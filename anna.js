@@ -15,6 +15,12 @@ var questions_channel_dev = "635737039517777931"
 const discord = require('discord.js')
 const client = new discord.Client()
 
+var tmp_token
+if (bot_secret) {
+  tmp_token = bot_secret.bot_secret_token
+}
+var discord_token = process.env.BOT_SECRET || tmp_token
+
 var anna_start = []
 
 process.on('uncaughtException', function(err) {
@@ -187,4 +193,4 @@ function annaStop(channel_id) {
   }
 }
 
-client.login(bot_secret.bot_secret_token)
+client.login(discord_token)
