@@ -10,9 +10,6 @@ const bot = require("./lib/bot")
 const discord = require('discord.js')
 const client = new discord.Client()
 
-const express = require('express') // for heroku
-const server = express()
-
 var anna = new bot()
 var bot_id = "581973598302896254"
 var greeter_id = "606685267675578369"
@@ -43,11 +40,6 @@ client.on('ready', () => {
 
   var nowPlayingText = "20 Questions" 
   client.user.setActivity(nowPlayingText)
-
-  var port = process.env.PORT || 5000
-  server.listen(port, function () {
-    console.log('Express server listening on %d', port);
-  })
 })
 
 // reactions
