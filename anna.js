@@ -168,6 +168,8 @@ function giveUp(messages) {
       // not greeter and not anna
       if ((msg.author.id != greeter_id) && (msg.author.id != bot_id)) {  
         var regex = /^[0-9]+$/g
+        var regex2 = /\d+$/g // ends with number
+
         var chan = msg.channel.name
         
         // allows channels to be named with -[name] 
@@ -175,8 +177,8 @@ function giveUp(messages) {
         var aChan = chan.split("-")
         if (aChan[0]) { chan = aChan[0] }
 
-          // only post in numbered channels
-          if (chan.match(regex)) {
+        // only post in numbered channels
+        if ((chan.match(regex)) || (chan.match(regex2))) {
           msg.react("✔️") 
         }
       }
