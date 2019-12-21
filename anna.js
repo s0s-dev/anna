@@ -171,7 +171,7 @@ function giveUp(messages) {
         var regex2 = /\d+$/g // ends with number
 
         var chan = msg.channel.name
-        
+
         // allows channels to be named with -[name] 
         /// like we have been doing on discord 
         var aChan = chan.split("-")
@@ -179,7 +179,15 @@ function giveUp(messages) {
 
         // only post in numbered channels
         if ((chan.match(regex)) || (chan.match(regex2))) {
-          msg.react("✔️") 
+          console.log("Tagging with emoji: ✔️")
+          msg.react("✔️")
+        } else {
+          var numChan = aChan.length
+          var tmpChan = aChan[numChan -1]
+          if ((tmpChan.match(regex)) || (tmpChan.match(regex2))) {
+            console.log("Tagging with emoji: ✔️")
+            msg.react("✔️")
+          }
         }
       }
     }
