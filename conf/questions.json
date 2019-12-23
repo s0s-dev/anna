@@ -1,110 +1,137 @@
 [
     {
         "id": "0",
+        "score": "1",
         "question": "Hi, my name Anna. I'm going to ask you a few questions. You can skip anything you want to. Are you ready to get started?"
     },  
     {
         "id": "1",
+        "score": "1",
         "question": "What is your most urgent need?"
     },
     {
         "id": "2",
+        "score": "1",
         "question": "When was the last time you ate?"
     },
     {
         "id": "4",
+        "score": "1",
         "question": "Where are you located?"
     },
     {
         "id": "5",
+        "score": "1",
         "question": "How old are you?"
     },
     { 
         "id": "6",
+        "score": "1",
         "question": "What is your race or ethnicity?"
     },
     { 
         "id": "7",
+        "score": "1",
         "question": "What gender do you identify as?"
     },
     { 
         "id": "8",
+        "score": "1",
         "question": "Do you identify as trans?"
     },
     { 
         "id": "9",
+        "score": "1",
         "question": "What is your sexual orientation?"
     },
     { 
         "id": "10",
+        "score": "1",
         "question": "Are you married or have you ever been married?"
     },
     { 
         "id": "11",
+        "score": "1",
         "question": "What is the highest level of education you have?"
     },
     { 
         "id": "12",
+        "score": "1",
         "question": "Do you have any trade skills or licenses?"
     },
     { 
         "id": "13",
+        "score": "1",
         "question": "Are you employed? If so, how many hours a week do you work?"
     },
     {
         "id": "14",
+        "score": "1",
         "question": "What is your approximate monthly income?"
     },
     {
         "id": "15",
+        "score": "1",
         "question": "Do you have reliable personal transportation, or do you have access to someone else's transportation??"
     },
     {
         "id": "16",
+        "score": "1",
         "question": "What is your current housing situation? Are you currently renting, staying with a friend, living in your car, living on the street or other?"
     },
     {
         "id": "17",
+        "score": "1",
         "question": "How many people live with you? Do you have any dependents? (children, elders, pets, roomates)"
     },
     {
         "id": "18",
+        "score": "1",
         "question": "Do you have a mailing address? If so, what is it?"
     },
     {
         "id": "19",
+        "score": "1",
         "question": "Are there any other adults who live at that address?"
     },
     { 
         "id": "20",
+        "score": "1",
         "question": "Are you a military veteran? If so, which branch?"
     },
     { 
         "id": "21",
+        "score": "1",
         "question": "Have you ever worked for the federal, state, or local government? If so, which department?"
     },
     { 
         "id": "22",
+        "score": "1",
         "question": "If you have been convicted of a felony, would you be interested in participating in a program to help felons re-entering the workforce?"
     },
     { 
         "id": "23",
+        "score": "1",
         "question": "Have you been the victim of domestic or sexual violence, assault, or abuse?"
     },
     { 
         "id": "24",
+        "score": "1",
         "question": "Do you have any outstanding debts, including things like student loans or credit card debts? Approximately how much do you owe?"
     },
     { 
         "id": "25",
+        "score": "1",
         "question": "Are you on or have you used government services before?"
     },
     { 
         "id": "26",
+        "score": "1",
         "question": "Have you worked with a non-profit group for assistance?"
     },
     {
         "id": "27",
+        "score": "1",
         "question": "Thanks, that's all the questions I have right now. I really appreciate your help! May I have your email address so I can send you a follow up email?"
     }
 ]

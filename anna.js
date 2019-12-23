@@ -54,7 +54,6 @@ client.on('messageReactionAdd', (reaction, user) => {
       if (reaction.message.author.bot) {
         // only send questions from end users, 
         // not people on the discord server
-        qChannel = client.channels.get(questions_channel)
 
         var qMsg = reaction.message.content
         console.log(qMsg)
@@ -63,16 +62,30 @@ client.on('messageReactionAdd', (reaction, user) => {
   }
 
   // emojis trigger next question
-  if (anna_functions.isNextEmoji(icon)) {
-    console.log("NEXT!")
-    
+  if (anna_functions.isNextEmoji(icon)) {    
     reaction.message.channel.fetchMessages({ limit: 20 })
     .then(function(messages) {
-      console.log("Get next question")
       var q = anna_functions.getQuestion(reaction.message.channel, messages)
     
-      if (q) {
-        console.log(q.question)
+      if (q) {        
+        var ans = {}
+        ans.channel = reaction.message.channel.name
+        ans.channel_id = reaction.message.channel.id
+        ans.question_id = q.id
+        ans.question = q.lastQuestion
+        ans.question_score = q.lastQuestionScore
+        ans.answer = reaction.message.content
+        ans.record_date = Date.now()
+        ans.question_date = q.lastQuestionDate
+        ans.answer_date = reaction.message.createdTimestamp
+        ans.delta = Math.abs(ans.answer_date - ans.question_date)
+
+        if (ans.delta) {
+          // only save if there is a score
+          anna.insertDataMongo(ans,"anna","answers")
+        }
+
+        console.log("Asking: " + q.question)
         timer_functions.setTimer(reaction.message.channel,q.question)  
         
         // add to started channel if not there (because it's obviously started)
@@ -92,9 +105,6 @@ client.on('message', (receivedMessage) => {
   } else {
 
     msgTimer = setTimeout(function() {
-      // get last message and tag it with next
-      console.log("MOVING ON!")
-  
       // Give up by reacting last message after 30 seconds
       receivedMessage.channel.fetchMessages({ limit: 1 })
       .then(messages => giveUp(messages))
@@ -103,11 +113,9 @@ client.on('message', (receivedMessage) => {
   
     console.log(receivedMessage.content)
     receivedMessage.channel.fetchMessages({ limit: 20 })
-    .then(messages => function(messages) {
-      console.log("Get next question")
-      
+    .then(messages => function(messages) {      
+      var q = getQuestion(receivedMessage.channel, messages)
       var msg = receivedMessage.content
-      console.log(msg)
     })
 
     var tmpMsg = receivedMessage.content
